@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://flyview23.com/sitemap.xml

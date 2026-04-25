@@ -697,8 +697,16 @@ window.CRISP_WEBSITE_ID="d7d882bc-a82a-4987-9ba1-651a707d0122";
 </script>
 
 <!-- GSAP -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+        integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+        integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d"
+        crossorigin="anonymous"></script>
+<!-- DOMPurify -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.2.4/purify.min.js"
+        integrity="sha384-eEu5CTj3qGvu9PdJuS+YlkNi7d2XxQROAFYOr59zgObtlcux1ae1Il3u7jvdCSWu"
+        crossorigin="anonymous"></script>
 <script>gsap.registerPlugin(ScrollTrigger);</script>
 
 <!-- MAIN MODULE -->
@@ -726,7 +734,7 @@ function setLang(l) {
   document.querySelectorAll('[data-es]').forEach(el => {
     var txt = lang === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
     if (!txt) return;
-    if (txt.includes('<')) { el.innerHTML = txt; } else { el.textContent = txt; }
+    if (txt.includes('<')) { el.innerHTML = DOMPurify.sanitize(txt); } else { el.textContent = txt; }
   });
   var btn = document.getElementById('langBtn');
   if (btn) btn.textContent = lang === 'es' ? 'EN' : 'ES';
