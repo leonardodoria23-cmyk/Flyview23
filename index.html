@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://flyview23.com/logo.jpg">
 <!-- WhatsApp preview -->
 <meta name="description" content="Producción audiovisual aérea profesional con drones en Colombia. Videos, fotos y contenido aéreo de alta calidad.">
+<link rel="preload" href="hero.mp4" as="video" type="video/mp4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script type="importmap">
@@ -384,7 +385,7 @@ footer{background:var(--bg);padding:84px 80px 28px;border-top:0.5px solid var(--
   <div class="video-hero-sticky" id="video-hero-sticky">
 
     <!-- Video background -->
-    <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="team.jpg">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high">
       <source src="hero.mp4" type="video/mp4">
     </video>
     <!-- Fallback visible only if video fails to load -->
