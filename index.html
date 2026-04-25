@@ -367,9 +367,11 @@ footer{background:var(--bg);padding:84px 80px 28px;border-top:0.5px solid var(--
   <div class="video-hero-sticky" id="video-hero-sticky">
 
     <!-- Video background -->
-    <video id="hero-video" autoplay muted loop playsinline preload="auto">
+    <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="team.jpg">
       <source src="hero.mp4" type="video/mp4">
     </video>
+    <!-- Fallback visible only if video fails to load -->
+    <div id="hero-video-fallback" style="display:none;position:absolute;inset:0;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);z-index:1;"></div>
 
     <!-- Cinematic overlays -->
     <div class="vh-overlay" id="vh-overlay"></div>
@@ -1073,9 +1075,60 @@ if (statsEl) cntObs.observe(statsEl);
 // Module scripts are deferred — DOM is already parsed when this runs
 
 // ── Video Hero ────────────────────────────────
+function forcePlayVideo() {
+  const vid = document.getElementById('hero-video');
+  const fallback = document.getElementById('hero-video-fallback');
+  if (!vid) return;
+
+  // Ensure required attributes are set at runtime (belt-and-suspenders for older WebKit)
+  vid.muted = true;
+  vid.setAttribute('muted', '');
+  vid.setAttribute('playsinline', '');
+
+  const tryPlay = () => {
+    const p = vid.play();
+    if (p !== undefined) {
+      p.catch(() => {
+        // Autoplay blocked — show gradient fallback, reveal on first user touch/click
+        if (fallback) fallback.style.display = 'block';
+        const unlock = () => {
+          vid.play().then(() => {
+            if (fallback) fallback.style.display = 'none';
+          }).catch(() => {});
+          document.removeEventListener('touchstart', unlock, { once: true });
+          document.removeEventListener('click', unlock, { once: true });
+        };
+        document.addEventListener('touchstart', unlock, { once: true, passive: true });
+        document.addEventListener('click', unlock, { once: true });
+      });
+    }
+  };
+
+  // Error loading the video file — keep fallback visible
+  vid.addEventListener('error', () => {
+    if (fallback) fallback.style.display = 'block';
+  }, { once: true });
+
+  // Intersection Observer: re-trigger play when hero scrolls back into view (iOS Safari)
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting && vid.paused) tryPlay(); });
+    }, { threshold: 0.1 }).observe(vid);
+  }
+
+  // Handle visibility-change (tab switching, app backgrounding on mobile)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && vid.paused) tryPlay();
+  });
+
+  if (vid.readyState >= 2) { tryPlay(); } else { vid.addEventListener('canplay', tryPlay, { once: true }); }
+}
+
 function setupVideoHero() {
   const zone = document.getElementById('video-hero-zone');
   if (!zone) return;
+
+  forcePlayVideo();
 
   // Load-in animation — fromTo so y-reveal works regardless of CSS starting state
   const tl = gsap.timeline({ delay: 0.4 });
