@@ -41,6 +41,8 @@ def job(v):
     run(full + ['-y', str(out / f'{slug}.mp4')])
     return slug
 
-with ThreadPoolExecutor(4) as ex:
-    for s in ex.map(job, VIDEOS):
-        print('ok', s, flush=True)
+if __name__ == '__main__':
+  only = set(sys.argv[1:])
+  with ThreadPoolExecutor(4) as ex:
+    for s in ex.map(job, [v for v in VIDEOS if not only or v[0] in only]):
+      print('ok', s, flush=True)
