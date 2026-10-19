@@ -63,7 +63,10 @@ s = rep(s, '<span class="ti">TAYRONA</span><span class="ts">✦</span>', '')
 s = rep(s, '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high">', '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high" poster="media/video/hero.jpg">')
 s = rep(s, 'background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);z-index:1;', 'background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;')
 s = rep(s, "  const tryPlay = () => {", "  vid.addEventListener('canplay', () => { if (vid.paused) tryPlay(); }, { once: true });\n  ['touchstart', 'click', 'scroll'].forEach(ev => window.addEventListener(ev, () => { if (vid.paused) vid.play().then(() => { if (fallback) fallback.style.display = 'none'; }).catch(() => {}); }, { once: true, passive: true }));\n  const tryPlay = () => {")
-s = rep(s, 'filter:contrast(1.08) saturate(0.88) brightness(0.82);', 'filter:contrast(1.08) saturate(0.9) brightness(0.55);')
+s = rep(s, 'filter:contrast(1.08) saturate(0.88) brightness(0.82);', '')
+s = rep(s, '<div class="vh-overlay" id="vh-overlay"></div>', '<div class="vh-overlay" id="vh-overlay"></div>\n    <div class="x-hero-dim" aria-hidden="true"></div>')
+s = rep(s, '<link rel="preload" href="hero.mp4" as="video" type="video/mp4">\n', '')
+s = s.replace('src="hero.mp4"', 'src="hero.mp4?v=2"')
 # años: 5+
 # números del inicio y de la franja
 a3 = s.index('<div class="vh-stats" id="vh-stats">'); b3 = s.index('<!-- Scroll hint -->', a3)
