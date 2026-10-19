@@ -84,59 +84,68 @@
   if (more) more.addEventListener('click', function () { shown += 12; applyFilter(); });
   applyFilter();
 
-  /* ── visor ── */
-  var lb = $('#x-lb'), stage = $('#x-lb-stage'), cap = $('#x-lb-cap'), cur = -1, lastFocus = null;
-  function visible() { return tiles.filter(function (el) { return !el.hidden; }); }
-  function openLb(i) {
-    var list = visible(); if (!list.length) return;
-    cur = (i + list.length) % list.length;
-    var el = list[cur], type = el.dataset.type, src = el.dataset.full, title = el.dataset['title' + (L() === 'en' ? 'En' : 'Es')];
+  /* ── visor: videos del portafolio o fotos de un álbum ── */
+  var lb = $('#x-lb'), stage = $('#x-lb-stage'), cap = $('#x-lb-cap'), items = [], cur = -1, lastFocus = null;
+  function tileTitle(el) { return el.dataset['title' + (L() === 'en' ? 'En' : 'Es')] || ''; }
+  function show(i) {
+    if (!items.length) return;
+    cur = (i + items.length) % items.length;
+    var it = items[cur];
     stage.innerHTML = '';
-    if (type === 'video') {
+    if (it.type === 'video') {
       var v = document.createElement('video');
-      v.src = src; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline', '');
+      v.src = it.src; v.controls = true; v.autoplay = true; v.playsInline = true; v.setAttribute('playsinline', '');
       stage.appendChild(v);
-    } else if (type === 'photo') {
-      var im = document.createElement('img'); im.src = src; im.alt = title; stage.appendChild(im);
     } else {
-      var f = document.createElement('iframe');
-      f.src = 'https://www.instagram.com/reel/' + encodeURIComponent(src) + '/embed/';
-      f.title = title; f.setAttribute('allow', 'autoplay; encrypted-media'); f.loading = 'lazy';
-      stage.appendChild(f);
+      var im = document.createElement('img'); im.src = it.src; im.alt = it.title; stage.appendChild(im);
     }
-    cap.textContent = title || '';
+    cap.textContent = it.title + (items.length > 1 ? '  ·  ' + (cur + 1) + ' / ' + items.length : '');
     if (lb.hidden) { lastFocus = document.activeElement; lb.hidden = false; document.body.style.overflow = 'hidden'; $('.x-lb-close', lb).focus(); }
   }
+  function openTile(el) {
+    if (el.dataset.type === 'album') {
+      var title = tileTitle(el);
+      items = el.dataset.photos.split('|').map(function (src) { return { type: 'photo', src: src, title: title }; });
+      show(0);
+    } else {
+      var vids = tiles.filter(function (t) { return !t.hidden && t.dataset.type === 'video'; });
+      items = vids.map(function (t) { return { type: 'video', src: t.dataset.full, title: tileTitle(t) }; });
+      show(vids.indexOf(el));
+    }
+  }
   function closeLb() { lb.hidden = true; stage.innerHTML = ''; document.body.style.overflow = ''; if (lastFocus) lastFocus.focus(); }
-  tiles.forEach(function (el) { el.addEventListener('click', function () { openLb(visible().indexOf(el)); }); });
+  tiles.forEach(function (el) { el.addEventListener('click', function () { openTile(el); }); });
   if (lb) {
     $('.x-lb-close', lb).addEventListener('click', closeLb);
-    $('.x-lb-prev', lb).addEventListener('click', function () { openLb(cur - 1); });
-    $('.x-lb-next', lb).addEventListener('click', function () { openLb(cur + 1); });
+    $('.x-lb-prev', lb).addEventListener('click', function () { show(cur - 1); });
+    $('.x-lb-next', lb).addEventListener('click', function () { show(cur + 1); });
     lb.addEventListener('click', function (e) { if (e.target === lb) closeLb(); });
     var sx = null;
     lb.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
     lb.addEventListener('touchend', function (e) {
       if (sx === null) return; var dx = e.changedTouches[0].clientX - sx; sx = null;
-      if (Math.abs(dx) > 60 && !(e.target.tagName === 'VIDEO' && e.target.controls && Math.abs(dx) < 120)) openLb(cur + (dx < 0 ? 1 : -1));
+      if (Math.abs(dx) > 60) show(cur + (dx < 0 ? 1 : -1));
     });
     lb.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeLb();
-      else if (e.key === 'ArrowRight') openLb(cur + 1);
-      else if (e.key === 'ArrowLeft') openLb(cur - 1);
+      else if (e.key === 'ArrowRight') show(cur + 1);
+      else if (e.key === 'ArrowLeft') show(cur - 1);
     });
   }
 
   /* ── reservas ── */
   var bk = $('#x-bk'), body = $('#x-bk-body'), st = null, bkFocus = null;
   var ORDER = ['video-jetski', 'jetski', 'lancha', 'planchon', 'jetcar', 'fotos-pueblo', 'video-santa-marta', 'quinceanera'];
-  function fresh(svc) {
-    var s = { step: svc ? 2 : 1, svc: svc || '', opt: '', dur: 60, qty: 1, horas: 1, video: 'sin-video', deco: false, mode: 'book', f: {} };
-    if (svc && P[svc]) s.opt = P[svc].opciones[0].id;
+  function fresh(svc, lock) {
+    var s = { step: svc ? 2 : 1, svc: svc || '', opt: '', lock: '', dur: 60, qty: 1, horas: 1, video: 'sin-video', deco: false, mode: 'book', f: {} };
+    if (svc && P[svc]) {
+      var ok = lock && P[svc].opciones.some(function (o) { return o.id === lock; });
+      s.opt = ok ? lock : P[svc].opciones[0].id; s.lock = ok ? lock : '';
+    }
     return s;
   }
-  function openBk(svc, quote) {
-    st = fresh(quote ? '' : svc);
+  function openBk(svc, quote, lock) {
+    st = fresh(quote ? '' : svc, lock);
     if (quote) { st.mode = 'quote'; st.step = 3; st.f.tipo = quote; }
     bkFocus = document.activeElement; bk.hidden = false; document.body.style.overflow = 'hidden'; render();
   }
@@ -148,7 +157,7 @@
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-book],[data-quote]'); if (!b) return;
-    e.preventDefault(); openBk(b.dataset.book || '', b.dataset.quote || '');
+    e.preventDefault(); openBk(b.dataset.book || '', b.dataset.quote || '', b.dataset.opt || '');
   });
 
   function bar(n) { return '<div class="x-bk-steps" aria-hidden="true">' + [1, 2, 3].map(function (i) { return '<i class="' + (i <= n ? 'on' : '') + '"></i>'; }).join('') + '</div>'; }
@@ -181,10 +190,11 @@
       h += '<button type="button" class="x-opt" data-svcq="1"><span class="x-opt-txt"><b>' + t('quoteCard') + '</b><small>' + t('quoteCardSub') + '</small></span></button></div>';
     } else if (st.step === 2) {
       var s = P[st.svc], c = selCalc();
-      h += bar(2) + '<h3 id="x-bk-title">' + esc(s[lang]) + '</h3><p class="x-bk-sub">' + esc(s.plaza) + (s['nota_' + lang] ? ' · ' + esc(s['nota_' + lang]) : '') + '</p><div class="x-form">';
+      var lockOpt = st.lock && s.opciones.filter(function (o) { return o.id === st.lock; })[0];
+      h += bar(2) + '<h3 id="x-bk-title">' + esc(lockOpt ? lockOpt[lang] : s[lang]) + '</h3><p class="x-bk-sub">' + esc(s.plaza) + (s['nota_' + lang] ? ' · ' + esc(s['nota_' + lang]) : '') + '</p><div class="x-form">';
       if (s.duracion) h += '<div><span class="x-note">' + t('dur') + '</span><div class="x-seg" role="radiogroup">' +
         [30, 60].map(function (d) { return '<button type="button" class="x-opt' + (st.dur === d ? ' is-on' : '') + '" data-dur="' + d + '" role="radio" aria-checked="' + (st.dur === d) + '"><span class="x-opt-txt"><b>' + t(d === 30 ? 'd30' : 'd60') + '</b></span></button>'; }).join('') + '</div></div>';
-      h += '<div class="x-svc" role="radiogroup">' + s.opciones.map(function (o) {
+      h += '<div class="x-svc" role="radiogroup">' + s.opciones.filter(function (o) { return !st.lock || o.id === st.lock; }).map(function (o) {
         var on = o.id === st.opt;
         return '<button type="button" class="x-opt' + (on ? ' is-on' : '') + '" data-opt="' + o.id + '" role="radio" aria-checked="' + on + '"><span class="x-opt-txt"><b>' + esc(o[lang]) + '</b>' + (o['d_' + lang] ? '<small>' + esc(o['d_' + lang]) + '</small>' : '') + '</span><span class="x-opt-price">' + optPrice(o) + '</span></button>';
       }).join('') + '</div>';
@@ -237,7 +247,7 @@
       else if (el.dataset.opt) { st.opt = el.dataset.opt; if (st.svc === 'lancha' && st.video === 'video-wakeboard') st.video = 'sin-video'; render(); }
       else if (el.dataset.dur) { st.dur = +el.dataset.dur; render(); }
       else if (el.dataset.q) { var k = el.dataset.q, d = +el.dataset.d, mx = +(el.dataset.max || 99); st[k] = Math.min(mx, Math.max(1, st[k] + d)); render(); }
-      else if (el.dataset.go) { keep(); st.step = +el.dataset.go; if (st.step === 1) st = fresh(''); render(); }
+      else if (el.dataset.go) { keep(); var g = +el.dataset.go; if (g === 1 && st.lock) { closeBk(); return; } st.step = g; if (g === 1) st = fresh(''); render(); }
       else if (el.hasAttribute('data-close')) closeBk();
     });
     body.addEventListener('change', function (e) {

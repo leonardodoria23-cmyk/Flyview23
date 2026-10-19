@@ -40,7 +40,7 @@ new_nav = '''<a class="nav-logo x-nav-logo" href="#" onclick="window.scrollTo({t
     <a href="#trabajo" onclick="navTo('trabajo');return false;" data-es="Trabajo" data-en="Work">Trabajo</a>
     <a href="#experiencias" onclick="navTo('experiencias');return false;" data-es="Experiencias" data-en="Experiences">Experiencias</a>
     <a href="#detras" onclick="navTo('detras');return false;" data-es="Detrás de cámara" data-en="Behind the scenes">Detrás de cámara</a>
-    <a href="#comunidad" onclick="navTo('comunidad');return false;" data-es="Comunidad" data-en="Community">Comunidad</a>
+    <a href="#premium" onclick="navTo('premium');return false;">Premium</a>
     <a href="#contact" onclick="navTo('contact');return false;" data-es="Contacto" data-en="Contact">Contacto</a>
   </div>
   '''
@@ -62,8 +62,13 @@ s = rep(s, 'data-es="Ventas en Bahía Santa Marta" data-en="Sales in Santa Marta
 s = rep(s, 'data-es="Entrega máxima" data-en="Max. delivery time">Entrega máxima', 'data-es="Tu video editado" data-en="Your edited video">Tu video editado')
 s = rep(s, '<span class="ti">TAYRONA</span><span class="ts">✦</span>', '')
 
+s = rep(s, '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high">', '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high" poster="media/video/hero.jpg">')
+s = rep(s, 'background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);z-index:1;', 'background:#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;')
+# años: 5+
+s = rep(s, '<span class="vhs-n">3<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span>', '<span class="vhs-n">5<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span>')
+s = rep(s, '<div class="stat-n" id="cnt-years">3<span>+</span></div>', '<div class="stat-n" id="cnt-years">5<span>+</span></div>')
 # sin la animación 3D del dron que se desarma
-a3 = s.index('<!-- ══ DRONE SECTION ══ -->'); b3 = s.index('<!-- ── MANIFIESTO ── -->')
+a3 = s.index('<!-- ══ DRONE SECTION ══ -->'); b3 = s.index('<!-- ── NOSOTROS ── -->')
 s = s[:a3] + s[b3:]
 a3 = s.index('<script type="importmap">'); b3 = s.index('</script>', a3) + len('</script>')
 s = s[:a3] + s[b3:]
