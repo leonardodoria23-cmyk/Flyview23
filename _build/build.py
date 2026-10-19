@@ -62,12 +62,16 @@ s = rep(s, 'data-es="Ventas en Bahía Santa Marta" data-en="Sales in Santa Marta
 s = rep(s, 'data-es="Entrega máxima" data-en="Max. delivery time">Entrega máxima', 'data-es="Tu video editado" data-en="Your edited video">Tu video editado')
 s = rep(s, '<span class="ti">TAYRONA</span><span class="ts">✦</span>', '')
 
-# dron actualizado
-s = rep(s, '<h2>DJI Mini 3 Pro</h2>', '<h2>DJI Mini 5 Pro</h2>')
-s = rep(s, '''data-es="Cámara 4K con sensor CMOS 1/1.3" · 249g · 34min de vuelo" data-en="4K camera with 1/1.3" CMOS sensor · 249g · 34min flight">Cámara 4K con sensor CMOS 1/1.3" · 249g · 34min de vuelo''',
-        '''data-es="Sensor de 1 pulgada · 4K a 120 fps · 36 min de vuelo" data-en="1-inch sensor · 4K at 120 fps · 36 min flight">Sensor de 1 pulgada · 4K a 120 fps · 36 min de vuelo''')
-s = rep(s, '<span class="spec-n">34<span>min</span></span>', '<span class="spec-n">36<span>min</span></span>')
-s = rep(s, '<span class="spec-n">18<span>km</span></span>', '<span class="spec-n">20<span>km</span></span>')
+# sin la animación 3D del dron que se desarma
+a3 = s.index('<!-- ══ DRONE SECTION ══ -->'); b3 = s.index('<!-- ── MANIFIESTO ── -->')
+s = s[:a3] + s[b3:]
+a3 = s.index('<script type="importmap">'); b3 = s.index('</script>', a3) + len('</script>')
+s = s[:a3] + s[b3:]
+s = rep(s, "import * as THREE from 'three';\nimport { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';\n", '')
+a3 = s.index('// ── Three.js Drone'); b3 = s.index('// ── Loader helpers')
+s = s[:a3] + s[b3:]
+s = rep(s, "initThree();\nsetupVideoHero();\nwindow.addEventListener('load', () => { if (!droneModel) finishLoading(); });",
+        "setupVideoHero();\nwindow.addEventListener('load', finishLoading);\nsetTimeout(finishLoading, 2500);")
 
 # idioma: avisar al resto de la página cuando cambia
 s = rep(s, "  if (btn) btn.textContent = lang === 'es' ? 'EN' : 'ES';\n}",

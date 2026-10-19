@@ -24,14 +24,7 @@
 <link rel="preload" href="hero.mp4" as="video" type="video/mp4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-  }
-}
-</script>
+
 <style>
 
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
@@ -650,38 +643,6 @@ a.x-ci:hover{border-color:var(--accent);}
   <div class="stat-item" data-r><div class="stat-n">24<span>H</span></div><div class="stat-l" data-es="Tu video editado" data-en="Your edited video">Tu video editado</div></div>
 </div>
 
-<!-- ══ DRONE SECTION ══ -->
-<div class="drone-zone" id="drone-zone">
-  <div class="drone-sticky" id="drone-sticky">
-    <canvas id="drone-canvas"></canvas>
-
-    <!-- Stage 1: intro -->
-    <div class="ht ht-2" id="ht1">
-      <span class="ht-eyebrow" data-es="La herramienta detrás de todo" data-en="The tool behind everything">La herramienta detrás de todo</span>
-      <h2>DJI Mini 5 Pro</h2>
-      <p data-es="Sensor de 1 pulgada · 4K a 120 fps · 36 min de vuelo" data-en="1-inch sensor · 4K at 120 fps · 36 min flight">Sensor de 1 pulgada · 4K a 120 fps · 36 min de vuelo</p>
-    </div>
-
-    <!-- Stage 2: disassembling -->
-    <div class="ht ht-3" id="ht2">
-      <span class="ht-eyebrow" data-es="Ingeniería de precisión" data-en="Precision engineering">Ingeniería de precisión</span>
-      <h2 data-es="Cada parte.<br>Perfeccionada." data-en="Every part.<br>Perfected.">Cada parte.<br>Perfeccionada.</h2>
-      <div class="hero-specs">
-        <div class="spec"><span class="spec-n">4<span>K</span></span><span class="spec-l" data-es="Resolución" data-en="Resolution">Resolución</span></div>
-        <div class="spec"><span class="spec-n">36<span>min</span></span><span class="spec-l" data-es="Vuelo máx." data-en="Max. flight">Vuelo máx.</span></div>
-        <div class="spec"><span class="spec-n">249<span>g</span></span><span class="spec-l" data-es="Peso" data-en="Weight">Peso</span></div>
-        <div class="spec"><span class="spec-n">20<span>km</span></span><span class="spec-l" data-es="Alcance" data-en="Range">Alcance</span></div>
-      </div>
-    </div>
-
-    <!-- Scroll hint -->
-    <div class="hero-hint" id="hero-hint">
-      <span>SCROLL</span>
-      <div class="hint-line"></div>
-    </div>
-  </div>
-</div>
-
 <!-- ── MANIFIESTO ── -->
 <section class="x-manifest section-pad" id="about">
   <div class="sec-wrap x-manifest-grid">
@@ -1070,8 +1031,6 @@ window.CRISP_WEBSITE_ID="d7d882bc-a82a-4987-9ba1-651a707d0122";
 
 <!-- MAIN MODULE -->
 <script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ── Nav smooth scroll ─────────────────────────────
 window.navTo = function(id) {
@@ -1125,299 +1084,6 @@ document.querySelectorAll('.svc-card').forEach(c => {
   });
   c.addEventListener('mouseleave', () => { c.style.transform = ''; });
 });
-
-// ── Three.js Drone ────────────────────────────────
-let renderer, scene, camera;
-let droneModel = null;
-let droneParts = [];
-let droneProgress = 0;
-let animFrame = 0;
-
-function initThree() {
-  const canvas = document.getElementById('drone-canvas');
-  const sticky = document.getElementById('drone-sticky');
-
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESToneMapping;
-  renderer.toneMappingExposure = 1.4;
-
-  scene = new THREE.Scene();
-
-  camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.set(0, 0.3, 5);
-
-  // Lighting — Apple-style: clean key + subtle rim
-  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
-  const key = new THREE.DirectionalLight(0xffffff, 2.2);
-  key.position.set(4, 6, 4);
-  scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.5);
-  fill.position.set(-4, 0, 4);
-  scene.add(fill);
-  const rim = new THREE.DirectionalLight(0x5ab3af, 0.9);
-  rim.position.set(-3, -3, -4);
-  scene.add(rim);
-
-  resizeRenderer();
-  window.addEventListener('resize', resizeRenderer);
-
-  // Try loading real GLB
-  const loader = new GLTFLoader();
-  loader.load(
-    'drone-model/source/c46229a5-d423-4230-ab42-c4d4bd59d2f6.glb',
-    gltf => {
-      droneModel = gltf.scene;
-      centerAndScaleModel(droneModel, 2.2);
-      scene.add(droneModel);
-      setupParts(droneModel);
-      finishLoading();
-      setupScrollAnim();
-    },
-    xhr => {
-      if (xhr.total > 0) {
-        setProgress((xhr.loaded / xhr.total) * 100);
-      }
-    },
-    err => {
-      console.warn('GLB unavailable (local file restriction), using fallback:', err.message);
-      droneModel = buildFallbackDrone();
-      scene.add(droneModel);
-      setupParts(droneModel);
-      finishLoading();
-      setupScrollAnim();
-    }
-  );
-
-  animateLoop();
-}
-
-function resizeRenderer() {
-  const canvas = document.getElementById('drone-canvas');
-  const w = canvas.offsetWidth;
-  const h = canvas.offsetHeight;
-  if (canvas.width !== w || canvas.height !== h) {
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-}
-
-function centerAndScaleModel(model, targetSize) {
-  const box = new THREE.Box3().setFromObject(model);
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-  const maxDim = Math.max(size.x, size.y, size.z);
-  const scale = targetSize / maxDim;
-  model.scale.setScalar(scale);
-  model.position.copy(center.negate().multiplyScalar(scale));
-}
-
-function setupParts(model) {
-  droneParts = [];
-  const worldBox = new THREE.Box3().setFromObject(model);
-  const worldCenter = worldBox.getCenter(new THREE.Vector3());
-  const worldSize = worldBox.getSize(new THREE.Vector3());
-  const maxDim = Math.max(worldSize.x, worldSize.y, worldSize.z);
-
-  // Assign index for staggered explosion timing
-  let idx = 0;
-
-  model.traverse(child => {
-    if (!child.isMesh) return;
-
-    const partBox = new THREE.Box3().setFromObject(child);
-    const partCenter = partBox.getCenter(new THREE.Vector3());
-    const worldDir = partCenter.clone().sub(worldCenter);
-    const dist = worldDir.length();
-
-    // Normalized direction in world space
-    const worldDirNorm = worldDir.clone();
-    if (worldDirNorm.length() < 0.001) worldDirNorm.set(
-      (Math.random() - 0.5), 1, (Math.random() - 0.5)
-    );
-    worldDirNorm.normalize();
-
-    // Convert explosion direction to LOCAL space of the mesh's parent
-    let localDir = worldDirNorm.clone();
-    if (child.parent && child.parent !== model) {
-      const inv = new THREE.Matrix4().copy(child.parent.matrixWorld).invert();
-      localDir.transformDirection(inv);
-    }
-    localDir.normalize();
-
-    // Boost Y component: parts above center go up more, parts below go down more
-    const yBias = worldDirNorm.y > 0 ? 1.4 : 1.0;
-    localDir.y *= yBias;
-    localDir.normalize();
-
-    // Farther parts (propellers, arms) separate much more than center parts
-    const normalizedDist = dist / (maxDim * 0.5);
-    const strength = 2.0 + normalizedDist * 3.5;
-
-    // Random per-part rotation axis for tumbling effect
-    const rotAxis = new THREE.Vector3(
-      Math.random() - 0.5,
-      Math.random() - 0.5,
-      Math.random() - 0.5
-    ).normalize();
-    const rotSpeed = (Math.random() - 0.5) * 0.9; // radians at full explode — subtle tumble
-
-    droneParts.push({
-      mesh: child,
-      origPos: child.position.clone(),
-      origRot: child.rotation.clone(),
-      dir: localDir,
-      strength,
-      rotAxis,
-      rotSpeed,
-      idx: idx++,
-    });
-  });
-}
-
-function buildFallbackDrone() {
-  const group = new THREE.Group();
-  const metal = new THREE.MeshStandardMaterial({ color: 0x999999, metalness: 0.85, roughness: 0.15 });
-  const dark = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.7, roughness: 0.3 });
-  const teal = new THREE.MeshStandardMaterial({ color: 0x2a7a78, metalness: 0.6, roughness: 0.4 });
-
-  // Body
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.12, 0.42), dark);
-  group.add(body);
-
-  // Camera mount
-  const cam = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.12, 0.1), teal);
-  cam.position.set(0, -0.04, 0.26);
-  group.add(cam);
-
-  // Arms + motors + props
-  [[-1,1],[1,1],[-1,-1],[1,-1]].forEach(([sx,sz]) => {
-    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.36,0.04,0.04), dark);
-    arm.position.set(sx*0.42, 0, sz*0.38);
-    arm.rotation.y = -Math.atan2(sz,sx) + Math.PI/4 * (sx * sz > 0 ? 1 : -1);
-    group.add(arm);
-
-    const motor = new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,0.05,12), metal);
-    motor.position.set(sx*0.72, 0.03, sz*0.64);
-    group.add(motor);
-
-    const prop1 = new THREE.Mesh(new THREE.BoxGeometry(0.48,0.008,0.04), dark);
-    prop1.position.set(sx*0.72, 0.07, sz*0.64);
-    group.add(prop1);
-    const prop2 = prop1.clone();
-    prop2.rotation.y = Math.PI/2;
-    group.add(prop2);
-  });
-
-  // Battery
-  const batt = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.08,0.28), teal);
-  batt.position.set(0,0.1,0);
-  group.add(batt);
-
-  return group;
-}
-
-function setupScrollAnim() {
-  const zone = document.getElementById('drone-zone');
-
-  // Show stage 1 text immediately on load
-  updateTextStages(0);
-
-  gsap.to({}, {
-    ease: 'none',
-    scrollTrigger: {
-      trigger: zone,
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: 1.8,
-      onUpdate: self => {
-        droneProgress = self.progress;
-        updateTextStages(droneProgress);
-      },
-      onLeaveBack: () => {
-        droneProgress = 0;
-        updateTextStages(0);
-      }
-    }
-  });
-
-  gsap.to('#hero-hint', {
-    opacity: 0,
-    scrollTrigger: {
-      trigger: zone,
-      start: 'top top',
-      end: '8% top',
-      scrub: true
-    }
-  });
-}
-
-function updateTextStages(p) {
-  const t1 = document.getElementById('ht1');
-  const t2 = document.getElementById('ht2');
-
-  // Stage 1 (assembled): 0% – 30%
-  if (p < 0.25) {
-    if(t1){ t1.style.opacity='1'; t1.style.transform='translateY(0)'; }
-    if(t2){ t2.style.opacity='0'; }
-  } else if (p < 0.42) {
-    const f = (p - 0.25) / 0.17;
-    if(t1){ t1.style.opacity=(1-f).toString(); t1.style.transform=`translateY(-${f*24}px)`; }
-    if(t2){ t2.style.opacity='0'; }
-  } else if (p < 0.62) {
-    if(t1){ t1.style.opacity='0'; }
-    if(t2){ t2.style.opacity=Math.min(1,(p-0.42)/0.12).toString(); t2.style.transform=`translateY(${(1-Math.min(1,(p-0.42)/0.12))*18}px)`; }
-  } else {
-    if(t1){ t1.style.opacity='0'; }
-    if(t2){ t2.style.opacity='1'; t2.style.transform='translateY(0)'; }
-  }
-}
-
-
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
-}
-
-function animateLoop() {
-  animFrame = requestAnimationFrame(animateLoop);
-  resizeRenderer();
-
-  if (droneModel) {
-    const explode = easeInOutCubic(droneProgress);
-
-    // Y-bob only while assembled; completely stops when exploded
-    droneModel.position.y = Math.sin(Date.now() * 0.0009) * 0.06 * (1 - explode);
-
-    // Slow base rotation — stops completely at full explosion
-    droneModel.rotation.y += 0.003 * Math.max(0, 1 - explode * 2);
-
-    // Camera pulls back significantly to fit all exploded pieces
-    camera.position.z = 5 + explode * 4.5;
-    camera.position.y = 0.3 + explode * 0.8;
-
-    // Explosion: each part flies to its position with individual tumble rotation
-    droneParts.forEach(p => {
-      const s = p.strength * explode;
-
-      // Position: radial explosion from center
-      p.mesh.position.x = p.origPos.x + p.dir.x * s;
-      p.mesh.position.y = p.origPos.y + p.dir.y * s;
-      p.mesh.position.z = p.origPos.z + p.dir.z * s;
-
-      // Rotation: each part tumbles on its own axis as it flies apart
-      if (p.rotAxis && explode > 0) {
-        const angle = p.rotSpeed * explode;
-        const q = new THREE.Quaternion().setFromAxisAngle(p.rotAxis, angle);
-        const baseQ = new THREE.Quaternion().setFromEuler(p.origRot);
-        p.mesh.quaternion.copy(baseQ).multiply(q);
-      }
-    });
-  }
-
-  renderer.render(scene, camera);
-}
 
 // ── Loader helpers ────────────────────────────────
 function setProgress(v) {
@@ -1566,9 +1232,9 @@ function setupVideoHero() {
   });
 }
 
-initThree();
 setupVideoHero();
-window.addEventListener('load', () => { if (!droneModel) finishLoading(); });
+window.addEventListener('load', finishLoading);
+setTimeout(finishLoading, 2500);
 </script>
 </body>
 </html>
