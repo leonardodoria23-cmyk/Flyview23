@@ -182,7 +182,10 @@ function doPost(e) {
   var lock = LockService.getScriptLock();
   try {
     lock.waitLock(20000);
+    if (!e || !e.postData || e.postData.contents.length > 20000) throw new Error('solicitud no válida');
     var d = JSON.parse(e.postData.contents);
+    if (d.datos && d.datos.web) return json_({ ok: true });          // robot: se ignora en silencio
+    limite_(d);
     var r;
     if (d.tipo === 'reserva') r = reserva_(d);
     else if (d.tipo === 'cotizacion') r = cotizacion_(d);
@@ -357,6 +360,28 @@ function marco_(titulo, cuerpo) {
     '<span style="color:#fff;font-weight:bold;letter-spacing:2px;margin-left:12px;vertical-align:middle">FLYVIEW<span style="color:#F5821F">23</span></span></div>' +
     '<div style="padding:24px;color:#111;font-size:15px;line-height:1.6"><h2 style="margin:0 0 12px;font-size:20px">' + titulo + '</h2>' + cuerpo + '</div>' +
     '<div style="padding:14px 24px;background:#f6f6f6;font-size:12px;color:#666">No solo capturamos momentos, creamos recuerdos que se quedan para siempre. · @flyview23</div></div>';
+}
+
+/* ===== Límites contra abuso ===== */
+function limite_(d) {
+  var cache = CacheService.getScriptCache();
+  var tel = soloDigitos_((d.datos && d.datos.whatsapp) || '');
+  var mail = String((d.datos && d.datos.correo) || '').toLowerCase();
+  [['g', 60], ['t' + tel, 5], ['m' + mail, 5]].forEach(function (k) {
+    if (k[0].length < 2) return;
+    var n = parseInt(cache.get(k[0]), 10) || 0;
+    if (n >= k[1]) throw new Error('demasiadas solicitudes, intenta más tarde');
+    cache.put(k[0], String(n + 1), 3600);
+  });
+  if (d.sel) {
+    d.sel.qty = Math.min(12, Math.max(1, parseInt(d.sel.qty, 10) || 1));
+    d.sel.horas = Math.min(8, Math.max(1, parseInt(d.sel.horas, 10) || 1));
+    d.sel.deco = d.sel.deco === true;
+  }
+  if (d.datos && d.datos.fecha) {
+    var f = new Date(d.datos.fecha + 'T12:00:00-05:00'), hoy = new Date();
+    if (isNaN(f) || f < new Date(hoy.getTime() - 864e5) || f > new Date(hoy.getTime() + 400 * 864e5)) throw new Error('fecha fuera de rango');
+  }
 }
 
 /* ===== Utilidades ===== */

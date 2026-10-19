@@ -236,3 +236,28 @@ a.x-ci:hover{border-color:var(--accent);}
 @media(max-width:768px){.x-rev-grid{grid-template-columns:minmax(0,1fr);}}
 
 .x-hero-dim{position:absolute;inset:0;z-index:2;background:rgba(0,0,0,.45);pointer-events:none;}
+
+/* reseñas en carrusel */
+.x-rev-car{position:relative;}
+.x-rev-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 28px)/3);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;padding-bottom:4px;}
+.x-rev-track::-webkit-scrollbar{display:none;}
+.x-rev-track .x-rev{scroll-snap-align:start;}
+.x-rev-track:focus-visible{outline:2px solid var(--accent);outline-offset:6px;border-radius:18px;}
+.x-rev-dots{display:flex;justify-content:center;gap:8px;margin-top:20px;}
+.x-rev-dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.22);transition:all .3s;}
+.x-rev-dots i.on{width:24px;border-radius:8px;background:var(--accent);}
+@media(max-width:1100px){.x-rev-track{grid-auto-columns:calc((100% - 14px)/2);}}
+@media(max-width:768px){.x-rev-track{grid-auto-columns:88%;}}
+
+/* fe y homenaje */
+.x-faith{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px 56px;padding:36px 0;border-top:1px solid var(--line);margin-top:8px;}
+.x-verse{margin:0;max-width:520px;}
+.x-verse blockquote{margin:0 0 8px;font-size:15px;line-height:1.65;font-style:italic;color:#d9d9d9;}
+.x-verse figcaption{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);}
+.x-mom{position:relative;padding-left:64px;max-width:520px;}
+.x-mom-23{position:absolute;left:0;top:-4px;font-family:var(--display);font-size:2.6rem;line-height:1;color:var(--accent);}
+.x-mom p{font-size:14px;line-height:1.7;color:var(--text2);margin:0 0 6px;}
+.x-mom-sign{font-size:13px;color:#cfe8ff;}
+@media(max-width:768px){.x-faith{grid-template-columns:minmax(0,1fr);}}
+
+.x-hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden;}

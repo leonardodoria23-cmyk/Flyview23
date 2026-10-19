@@ -23,6 +23,8 @@ i = s.index('</style>'); s = s[:i] + css + s[i:]
 
 # metadatos
 s = rep(s, '<link rel="icon" type="image/x-icon" href="favicon.ico">', '<link rel="icon" type="image/x-icon" href="favicon.ico?v=2">\n<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n<meta name="theme-color" content="#000000">')
+CSP = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://*.crisp.chat; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.crisp.chat; font-src 'self' data: https://fonts.gstatic.com https://*.crisp.chat; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.crisp.chat; connect-src 'self' https://script.google.com https://script.googleusercontent.com https://*.crisp.chat wss://*.crisp.chat; frame-src https://*.crisp.chat; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+s = rep(s, '<meta name="viewport" content="width=device-width,initial-scale=1">', '<meta name="viewport" content="width=device-width,initial-scale=1">\n<meta http-equiv="Content-Security-Policy" content="' + CSP + '">\n<meta name="referrer" content="strict-origin-when-cross-origin">')
 s = rep(s, '<title>FLYVIEW23 — Producción Audiovisual Aérea · Colombia</title>',
         '<title>Flyview23 · Video con dron y experiencias en Guatapé y Santa Marta</title>')
 s = s.replace('content="Producción audiovisual aérea profesional con drones en Colombia. Videos, fotos y contenido aéreo de alta calidad."',
