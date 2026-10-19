@@ -22,6 +22,7 @@ s = rep(s, '--accent:#2a7a78;--accent2:#5ab3af;--accent3:#a8ddd9;', '--accent:#F
 i = s.index('</style>'); s = s[:i] + css + s[i:]
 
 # metadatos
+s = rep(s, '<link rel="icon" type="image/x-icon" href="favicon.ico">', '<link rel="icon" type="image/x-icon" href="favicon.ico?v=2">\n<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n<meta name="theme-color" content="#000000">')
 s = rep(s, '<title>FLYVIEW23 — Producción Audiovisual Aérea · Colombia</title>',
         '<title>Flyview23 · Video con dron y experiencias en Guatapé y Santa Marta</title>')
 s = s.replace('content="Producción audiovisual aérea profesional con drones en Colombia. Videos, fotos y contenido aéreo de alta calidad."',
@@ -35,7 +36,7 @@ s = s.replace('<meta name="twitter:card" content="summary">', '<meta name="twitt
 
 # menú
 old_nav = s[s.index('<div class="nav-logo"'):s.index('<div class="nav-right">')]
-new_nav = '''<a class="nav-logo x-nav-logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Flyview23, inicio"><img src="logo-fv23.svg" alt="" width="34" height="34"><span>FLYVIEW23</span></a>
+new_nav = '''<a class="nav-logo x-nav-logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Flyview23, inicio"><img src="logo-fv23-64.png" alt="" width="34" height="34"><span>FLYVIEW23</span></a>
   <div class="nav-links">
     <a href="#trabajo" onclick="navTo('trabajo');return false;" data-es="Trabajo" data-en="Work">Trabajo</a>
     <a href="#experiencias" onclick="navTo('experiencias');return false;" data-es="Experiencias" data-en="Experiences">Experiencias</a>
@@ -57,16 +58,34 @@ s = rep(s, '''<a href="#gallery" onclick="navTo('gallery');return false;" class=
         <a href="#sub" onclick="navTo('sub');return false;" class="btn-secondary" data-es="Suscripción" data-en="Subscription">Suscripción</a>''',
         '''<button class="x-btn" data-book="" data-es="Reservar ahora" data-en="Book now">Reservar ahora</button>
         <a href="#trabajo" onclick="navTo('trabajo');return false;" class="btn-secondary" data-es="Ver nuestro trabajo" data-en="See our work">Ver nuestro trabajo</a>''')
-s = rep(s, '<span class="vhs-l" data-es="Ventas" data-en="Sales">Ventas</span>', '<span class="vhs-l" data-es="Recuerdos" data-en="Memories">Recuerdos</span>')
-s = rep(s, 'data-es="Ventas en Bahía Santa Marta" data-en="Sales in Santa Marta Bay">Ventas en Bahía Santa Marta', 'data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados')
-s = rep(s, 'data-es="Entrega máxima" data-en="Max. delivery time">Entrega máxima', 'data-es="Tu video editado" data-en="Your edited video">Tu video editado')
 s = rep(s, '<span class="ti">TAYRONA</span><span class="ts">✦</span>', '')
 
 s = rep(s, '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high">', '<video id="hero-video" autoplay muted loop playsinline preload="auto" fetchpriority="high" poster="media/video/hero.jpg">')
-s = rep(s, 'background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);z-index:1;', 'background:#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;')
+s = rep(s, 'background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 50%,#0a0a0a 100%);z-index:1;', 'background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;')
+s = rep(s, "  const tryPlay = () => {", "  vid.addEventListener('canplay', () => { if (vid.paused) tryPlay(); }, { once: true });\n  ['touchstart', 'click', 'scroll'].forEach(ev => window.addEventListener(ev, () => { if (vid.paused) vid.play().then(() => { if (fallback) fallback.style.display = 'none'; }).catch(() => {}); }, { once: true, passive: true }));\n  const tryPlay = () => {")
+s = rep(s, 'filter:contrast(1.08) saturate(0.88) brightness(0.82);', 'filter:contrast(1.08) saturate(0.9) brightness(0.55);')
 # años: 5+
-s = rep(s, '<span class="vhs-n">3<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span>', '<span class="vhs-n">5<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span>')
-s = rep(s, '<div class="stat-n" id="cnt-years">3<span>+</span></div>', '<div class="stat-n" id="cnt-years">5<span>+</span></div>')
+# números del inicio y de la franja
+a3 = s.index('<div class="vh-stats" id="vh-stats">'); b3 = s.index('<!-- Scroll hint -->', a3)
+s = s[:a3] + """<div class="vh-stats" id="vh-stats">
+      <div class="vhs"><span class="vhs-n">70K<span>+</span></span><span class="vhs-l" data-es="Recuerdos" data-en="Memories">Recuerdos</span></div>
+      <div class="vhs-sep"></div>
+      <div class="vhs"><span class="vhs-n">5<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span></div>
+      <div class="vhs-sep"></div>
+      <div class="vhs"><span class="vhs-n">5.0<span>★</span></span><span class="vhs-l">Google</span></div>
+      <div class="vhs-sep"></div>
+      <div class="vhs"><span class="vhs-n">2</span><span class="vhs-l" data-es="Destinos" data-en="Destinations">Destinos</span></div>
+    </div>
+
+    """ + s[b3:]
+a3 = s.index('<div class="stats-bar">'); b3 = s.index('</div>\n', s.index('Entrega máxima', a3)) + 7
+s = s[:a3] + """<div class="stats-bar">
+  <div class="stat-item" data-r><div class="stat-n" id="cnt-sales">70<span>K+</span></div><div class="stat-l" data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados</div></div>
+  <div class="stat-item" data-r><div class="stat-n" id="cnt-years">5<span>+</span></div><div class="stat-l" data-es="Años creando recuerdos" data-en="Years creating memories">Años creando recuerdos</div></div>
+  <div class="stat-item" data-r><a class="x-stat-link" href="https://www.google.com/maps/place/?q=place_id:ChIJo6lnKyr19I4ReKrvMCFCn3c" target="_blank" rel="noopener"><div class="stat-n">5<span>.0★</span></div><div class="stat-l" data-es="62 reseñas en Google" data-en="62 Google reviews">62 reseñas en Google</div></a></div>
+  <div class="stat-item" data-r><div class="stat-n">2</div><div class="stat-l" data-es="Destinos: Guatapé y Santa Marta" data-en="Destinations: Guatapé &amp; Santa Marta">Destinos: Guatapé y Santa Marta</div></div>
+</div>
+""" + s[b3:]
 # sin la animación 3D del dron que se desarma
 a3 = s.index('<!-- ══ DRONE SECTION ══ -->'); b3 = s.index('<!-- ── NOSOTROS ── -->')
 s = s[:a3] + s[b3:]
@@ -93,6 +112,6 @@ print('ok', len(s), 'bytes')
 import base64
 gs = (root / 'apps-script' / 'Code.template.gs').read_text()
 gs = gs.replace('{{PRECIOS}}', (root / 'js' / 'precios.js').read_text())
-gs = gs.replace('{{LOGO}}', base64.b64encode((root / 'logo-fv23.png').read_bytes()).decode())
+gs = gs.replace('{{LOGO}}', base64.b64encode((root / 'logo-fv23-256.png').read_bytes()).decode())
 (root / 'apps-script' / 'Code.gs').write_text(gs)
 print('apps-script/Code.gs', len(gs), 'bytes')

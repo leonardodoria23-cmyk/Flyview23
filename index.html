@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Flyview23 · Video con dron y experiencias en Guatapé y Santa Marta</title>
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/x-icon" href="favicon.ico?v=2">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
 <!-- Open Graph / Social Media -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://flyview23.com/">
@@ -310,7 +313,7 @@ footer{background:var(--bg);padding:84px 80px 28px;border-top:0.5px solid var(--
 /* ─── VIDEO HERO ──────────────────────────── */
 .video-hero-zone{position:relative;height:300vh;}
 .video-hero-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000;}
-#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;will-change:transform;filter:contrast(1.08) saturate(0.88) brightness(0.82);}
+#hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform-origin:center center;will-change:transform;filter:contrast(1.08) saturate(0.9) brightness(0.55);}
 .vh-overlay{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 0%,rgba(0,0,0,.55) 100%),linear-gradient(to bottom,rgba(0,0,0,.25) 0%,rgba(0,0,0,.05) 35%,rgba(0,0,0,.65) 100%);pointer-events:none;}
 .vh-scanlines{position:absolute;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent,transparent 2px,rgba(0,0,0,.022) 2px,rgba(0,0,0,.022) 4px);}
 .vh-grain{position:absolute;inset:-50%;z-index:3;width:200%;height:200%;pointer-events:none;opacity:.032;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.78' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:vhGrain .18s steps(1) infinite;}
@@ -569,6 +572,19 @@ a.x-ci:hover{border-color:var(--accent);}
 .x-cards-jet{grid-template-columns:repeat(4,minmax(0,1fr));}
 @media(max-width:1100px){.x-cards-jet{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:768px){.x-manifest-img img{aspect-ratio:4/4.4;}}
+
+/* reseñas y franja de números */
+.x-reviews{background:var(--bg);}
+.x-rev-count{color:var(--text2);font-size:.55em;}
+.x-rev-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.x-rev{margin:0;background:var(--bg3);border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column;gap:12px;}
+.x-stars{color:#FBBC04;font-size:16px;letter-spacing:2px;}
+.x-rev blockquote{margin:0;font-size:15px;line-height:1.6;color:#e8e8e8;flex:1;}
+.x-rev figcaption{font-size:12px;color:var(--text2);font-weight:600;letter-spacing:1px;}
+.x-stat-link{color:inherit;text-decoration:none;display:block;}
+.x-nav-logo img{border-radius:50%;}
+@media(max-width:1100px){.x-rev-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:768px){.x-rev-grid{grid-template-columns:minmax(0,1fr);}}
 </style>
 </head>
 <body>
@@ -583,7 +599,7 @@ a.x-ci:hover{border-color:var(--accent);}
 
 <!-- NAV -->
 <nav id="nav">
-  <a class="nav-logo x-nav-logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Flyview23, inicio"><img src="logo-fv23.svg" alt="" width="34" height="34"><span>FLYVIEW23</span></a>
+  <a class="nav-logo x-nav-logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Flyview23, inicio"><img src="logo-fv23-64.png" alt="" width="34" height="34"><span>FLYVIEW23</span></a>
   <div class="nav-links">
     <a href="#trabajo" onclick="navTo('trabajo');return false;" data-es="Trabajo" data-en="Work">Trabajo</a>
     <a href="#experiencias" onclick="navTo('experiencias');return false;" data-es="Experiencias" data-en="Experiences">Experiencias</a>
@@ -605,7 +621,7 @@ a.x-ci:hover{border-color:var(--accent);}
       <source src="hero.mp4" type="video/mp4">
     </video>
     <!-- Fallback visible only if video fails to load -->
-    <div id="hero-video-fallback" style="display:none;position:absolute;inset:0;background:#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;"></div>
+    <div id="hero-video-fallback" style="display:none;position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),#fff url(media/video/hero.jpg) center/cover no-repeat;z-index:1;"></div>
 
     <!-- Cinematic overlays -->
     <div class="vh-overlay" id="vh-overlay"></div>
@@ -633,13 +649,13 @@ a.x-ci:hover{border-color:var(--accent);}
 
     <!-- Stats row at bottom -->
     <div class="vh-stats" id="vh-stats">
-      <div class="vhs"><span class="vhs-n">10K<span>+</span></span><span class="vhs-l" data-es="Recuerdos" data-en="Memories">Recuerdos</span></div>
+      <div class="vhs"><span class="vhs-n">70K<span>+</span></span><span class="vhs-l" data-es="Recuerdos" data-en="Memories">Recuerdos</span></div>
       <div class="vhs-sep"></div>
       <div class="vhs"><span class="vhs-n">5<span>+</span></span><span class="vhs-l" data-es="Años" data-en="Years">Años</span></div>
       <div class="vhs-sep"></div>
-      <div class="vhs"><span class="vhs-n">4K</span><span class="vhs-l">Drone</span></div>
+      <div class="vhs"><span class="vhs-n">5.0<span>★</span></span><span class="vhs-l">Google</span></div>
       <div class="vhs-sep"></div>
-      <div class="vhs"><span class="vhs-n">24H</span><span class="vhs-l" data-es="Entrega" data-en="Delivery">Entrega</span></div>
+      <div class="vhs"><span class="vhs-n">2</span><span class="vhs-l" data-es="Destinos" data-en="Destinations">Destinos</span></div>
     </div>
 
     <!-- Scroll hint -->
@@ -656,10 +672,11 @@ a.x-ci:hover{border-color:var(--accent);}
 
 <!-- ── STATS ── -->
 <div class="stats-bar">
-  <div class="stat-item" data-r><div class="stat-n" id="cnt-sales">10<span>K+</span></div><div class="stat-l" data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados</div></div>
-  <div class="stat-item" data-r><div class="stat-n" id="cnt-years">5<span>+</span></div><div class="stat-l" data-es="Años en el mercado" data-en="Years in market">Años en el mercado</div></div>
-  <div class="stat-item" data-r><div class="stat-n">4<span>K</span></div><div class="stat-l" data-es="Resolución del drone" data-en="Drone resolution">Resolución del drone</div></div>
-  <div class="stat-item" data-r><div class="stat-n">24<span>H</span></div><div class="stat-l" data-es="Tu video editado" data-en="Your edited video">Tu video editado</div></div>
+  <div class="stat-item" data-r><div class="stat-n" id="cnt-sales">70<span>K+</span></div><div class="stat-l" data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados</div></div>
+  <div class="stat-item" data-r><div class="stat-n" id="cnt-years">5<span>+</span></div><div class="stat-l" data-es="Años creando recuerdos" data-en="Years creating memories">Años creando recuerdos</div></div>
+  <div class="stat-item" data-r><a class="x-stat-link" href="https://www.google.com/maps/place/?q=place_id:ChIJo6lnKyr19I4ReKrvMCFCn3c" target="_blank" rel="noopener"><div class="stat-n">5<span>.0★</span></div><div class="stat-l" data-es="62 reseñas en Google" data-en="62 Google reviews">62 reseñas en Google</div></a></div>
+  <div class="stat-item" data-r><div class="stat-n">2</div><div class="stat-l" data-es="Destinos: Guatapé y Santa Marta" data-en="Destinations: Guatapé &amp; Santa Marta">Destinos: Guatapé y Santa Marta</div></div>
+</div>
 </div>
 
 <!-- ── NOSOTROS ── -->
@@ -674,7 +691,7 @@ a.x-ci:hover{border-color:var(--accent);}
       <p class="sec-body" data-r data-es="Recuerdos que se quedan para siempre: el jetski frente a La Piedra, el sí en la playa al atardecer, toda la familia de blanco en la bahía. Somos un equipo con licencia y permisos para volar, y llevamos más de 5 años guardando desde el cielo lo que la gente vive en Guatapé y Santa Marta." data-en="Memories that stay forever: the jetski in front of La Piedra, the yes on the beach at sunset, the whole family in white at the bay. We are a licensed, permitted drone team and for over 5 years we have kept, from the sky, what people live in Guatapé and Santa Marta.">Recuerdos que se quedan para siempre: el jetski frente a La Piedra, el sí en la playa al atardecer, toda la familia de blanco en la bahía. Somos un equipo con licencia y permisos para volar, y llevamos más de 5 años guardando desde el cielo lo que la gente vive en Guatapé y Santa Marta.</p>
       <div class="x-facts" data-r>
         <div><b>5+</b><span data-es="Años de experiencia" data-en="Years of experience">Años de experiencia</span></div>
-        <div><b>10K+</b><span data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados</span></div>
+        <div><b>70K+</b><span data-es="Recuerdos entregados" data-en="Memories delivered">Recuerdos entregados</span></div>
         <div><b>2</b><span data-es="Destinos: Guatapé y Santa Marta" data-en="Destinations: Guatapé &amp; Santa Marta">Destinos: Guatapé y Santa Marta</span></div>
       </div>
     </div>
@@ -751,7 +768,7 @@ a.x-ci:hover{border-color:var(--accent);}
         </div>
       </article>
       <article class="x-card" data-r>
-        <div class="x-card-media"><img src="media/img/fly-pro/fly-pro-04.jpg" alt="Jetski Básico en el embalse de Guatapé" loading="lazy"></div>
+        <div class="x-card-media"><img src="media/img/fly-legend/fly-legend-02.jpg" alt="Jetski en el embalse de Guatapé visto desde el dron" loading="lazy"></div>
         <div class="x-card-body">
           <h4 data-es="Jetski Básico" data-en="Basic Jetski">Jetski Básico</h4>
           <p data-es="Para 1 o 2 personas, hasta 50 km/h. Ideal si es tu primera vez." data-en="For 1 or 2 people, up to 50 km/h. Great for your first time.">Para 1 o 2 personas, hasta 50 km/h. Ideal si es tu primera vez.</p>
@@ -775,7 +792,7 @@ a.x-ci:hover{border-color:var(--accent);}
         </div>
       </article>
       <article class="x-card" data-r>
-        <div class="x-card-media"><img src="media/img/fly-legend/fly-legend-05.jpg" alt="Jetski Premium frente a La Piedra del Peñol" loading="lazy"></div>
+        <div class="x-card-media"><img src="media/img/fly-pro/fly-pro-04.jpg" alt="Jetski Premium en el embalse de Guatapé" loading="lazy"></div>
         <div class="x-card-body">
           <h4 data-es="Jetski Premium" data-en="Premium Jetski">Jetski Premium</h4>
           <p data-es="Para 2 personas, hasta 90 km/h. La máxima velocidad del embalse." data-en="For 2 people, up to 90 km/h. The fastest ride on the reservoir.">Para 2 personas, hasta 90 km/h. La máxima velocidad del embalse.</p>
@@ -896,6 +913,25 @@ a.x-ci:hover{border-color:var(--accent);}
   </div>
 </section>
 
+<!-- ── RESEÑAS ── -->
+<section class="x-reviews section-pad" id="resenas">
+  <div class="sec-wrap">
+    <div class="x-head">
+      <div>
+        <div class="sec-eyebrow" data-r data-es="Lo que dicen en Google" data-en="What people say on Google">Lo que dicen en Google</div>
+        <h2 class="x-display" data-r>5.0 ★ <span class="x-rev-count" data-es="· 62 reseñas" data-en="· 62 reviews">· 62 reseñas</span></h2>
+      </div>
+      <a class="x-btn-ghost" data-r href="https://www.google.com/maps/place/?q=place_id:ChIJo6lnKyr19I4ReKrvMCFCn3c" target="_blank" rel="noopener" data-es="Ver todas en Google" data-en="See them all on Google">Ver todas en Google</a>
+    </div>
+    <div class="x-rev-grid">
+      <figure class="x-rev" data-r><div class="x-stars" aria-label="5 estrellas">★★★★★</div><blockquote data-es="Un servicio maravilloso, nos encantó el video. Gracias por un recuerdo tan bonito que mi mamá y yo nos llevamos a Medellín." data-en="Wonderful service, we loved the video. Thank you for such a lovely memory that my mother and I will take back to Medellín.">Un servicio maravilloso, nos encantó el video. Gracias por un recuerdo tan bonito que mi mamá y yo nos llevamos a Medellín.</blockquote><figcaption>Google</figcaption></figure>
+      <figure class="x-rev" data-r><div class="x-stars" aria-label="5 estrellas">★★★★★</div><blockquote data-es="Una excelente experiencia. Quedé encantada con las fotos y los videos. Se nota la dedicación, la calidad es muy buena y la atención fue muy amable y profesional." data-en="An excellent experience. I was delighted with the photos and videos. The dedication shows, the quality is great and the service was friendly and professional.">Una excelente experiencia. Quedé encantada con las fotos y los videos. Se nota la dedicación, la calidad es muy buena y la atención fue muy amable y profesional.</blockquote><figcaption>Google</figcaption></figure>
+      <figure class="x-rev" data-r><div class="x-stars" aria-label="5 estrellas">★★★★★</div><blockquote data-es="Un recuerdo excelente en video con dron. Tendremos estos momentos para mirarlos y compartirlos el resto de nuestras vidas." data-en="An excellent memory captured on drone video. We will have these moments to look back on and share for the rest of our lives.">Un recuerdo excelente en video con dron. Tendremos estos momentos para mirarlos y compartirlos el resto de nuestras vidas.</blockquote><figcaption>Google</figcaption></figure>
+      <figure class="x-rev" data-r><div class="x-stars" aria-label="5 estrellas">★★★★★</div><blockquote data-es="¡Video hermoso! El servicio, ¡todo! Me encantó. 100 % recomendado." data-en="Beautiful video! The service, everything! I loved it. 100% recommended.">¡Video hermoso! El servicio, ¡todo! Me encantó. 100 % recomendado.</blockquote><figcaption>Google</figcaption></figure>
+    </div>
+  </div>
+</section>
+
 <!-- ── PREMIUM ── -->
 <section class="x-club" id="premium">
   <img class="x-club-bg" src="media/img/santa-marta/santa-marta-16.jpg" alt="" aria-hidden="true" loading="lazy">
@@ -950,7 +986,7 @@ a.x-ci:hover{border-color:var(--accent);}
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-brand">
-        <img class="x-logo-foot" src="logo-fv23.svg" alt="Flyview23" width="72" height="72">
+        <img class="x-logo-foot" src="logo-fv23-256.png" alt="Flyview23" width="72" height="72">
         <p class="footer-brand-desc" data-es="No solo capturamos momentos, creamos recuerdos que se quedan para siempre." data-en="We don't just capture moments, we create memories that last forever.">No solo capturamos momentos, creamos recuerdos que se quedan para siempre.</p>
       </div>
       <div class="footer-col">
@@ -1125,6 +1161,8 @@ function forcePlayVideo() {
   vid.setAttribute('muted', '');
   vid.setAttribute('playsinline', '');
 
+  vid.addEventListener('canplay', () => { if (vid.paused) tryPlay(); }, { once: true });
+  ['touchstart', 'click', 'scroll'].forEach(ev => window.addEventListener(ev, () => { if (vid.paused) vid.play().then(() => { if (fallback) fallback.style.display = 'none'; }).catch(() => {}); }, { once: true, passive: true }));
   const tryPlay = () => {
     const p = vid.play();
     if (p !== undefined) {
