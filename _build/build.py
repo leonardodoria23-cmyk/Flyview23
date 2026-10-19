@@ -82,6 +82,10 @@ s = rep(s, "initThree();\nsetupVideoHero();\nwindow.addEventListener('load', () 
 s = rep(s, "  if (btn) btn.textContent = lang === 'es' ? 'EN' : 'ES';\n}",
         "  if (btn) btn.textContent = lang === 'es' ? 'EN' : 'ES';\n  document.documentElement.lang = lang;\n  document.dispatchEvent(new CustomEvent('fv23lang', { detail: lang }));\n}")
 
+import hashlib
+for f in ['js/config.js', 'js/precios.js', 'js/fv23.js']:
+    h = hashlib.md5((root / f).read_bytes()).hexdigest()[:8]
+    s = rep(s, f'<script src="{f}"></script>', f'<script src="{f}?v={h}"></script>')
 (root / 'index.html').write_text(s)
 print('ok', len(s), 'bytes')
 
